@@ -1,0 +1,136 @@
+package com.university.course;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Course {
+    private String courseId;
+    private String courseName;
+    private int capacity;
+    private List<String> prerequisites;
+    private List<String> enrolledStudents;
+
+    public Course(String courseId, String courseName, int capacity) {
+        this.courseId = courseId;
+        this.courseName = courseName;
+        this.capacity = capacity;
+        this.prerequisites = new ArrayList<>();
+        this.enrolledStudents = new ArrayList<>();
+    }
+
+    // Getters and Setters
+    public String getCourseId() { return courseId; }
+    public void setCourseId(String courseId) { this.courseId = courseId; }
+
+    public String getCourseName() { return courseName; }
+    public void setCourseName(String courseName) { this.courseName = courseName; }
+
+    public int getCapacity() { return capacity; }
+    public void setCapacity(int capacity) { this.capacity = capacity; }
+
+    public List<String> getPrerequisites() { return prerequisites; }
+    public void addPrerequisite(String courseId) { prerequisites.add(courseId); }
+
+    public List<String> getEnrolledStudents() { return enrolledStudents; }
+
+    public boolean enrollStudent(String studentId) {
+        if (enrolledStudents.size() < capacity) {
+            enrolledStudents.add(studentId);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean dropStudent(String studentId) {
+        return enrolledStudents.remove(studentId);
+    }
+
+    public void displayCourseInfo() {
+        System.out.println("Course ID: " + courseId);
+        System.out.println("Course Name: " + courseName);
+        System.out.println("Capacity: " + capacity);
+        System.out.println("Enrolled Students: " + enrolledStudents.size());
+        if (!prerequisites.isEmpty()) {
+            System.out.println("Prerequisites: " + String.join(", ", prerequisites));
+        }
+    }
+}
+public class CourseManagementTest {
+    public static void main(String[] args) {
+        CourseManager manager = new CourseManager();
+        Course math = new Course("C101", "Mathematics", 30);
+        math.addPrerequisite("C100");
+        Course cs = new Course("C102", "Computer Science", 25);
+        manager.addCourse(math);
+        manager.addCourse(cs);
+        System.out.println("\n=== All Courses ===");
+        manager.listCourses();
+        manager.updateCourse("C102", "Computer Science Advanced", 35);
+        manager.removeCourse("C101");
+        System.out.println("\n=== Courses After Update & Remove ===");
+        manager.listCourses();
+    }
+}
+package com.university.course;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+public class CourseManager {
+    private List<Course> courses;
+
+    public CourseManager() {
+        courses = new ArrayList<>();
+    }
+
+    // Create
+    public void addCourse(Course course) {
+        courses.add(course);
+        System.out.println("Course added successfully: " + course.getCourseName());
+    }
+
+    // Read
+    public void listCourses() {
+        if (courses.isEmpty()) {
+            System.out.println("No courses available.");
+            return;
+        }
+        for (Course c : courses) {
+            c.displayCourseInfo();
+            System.out.println("----------------------");
+        }
+    }
+
+    public Optional<Course> getCourseById(String courseId) {
+        return courses.stream()
+                .filter(c -> c.getCourseId().equals(courseId))
+                .findFirst();
+    }
+
+    // Update
+    public boolean updateCourse(String courseId, String newName, int newCapacity) {
+        Optional<Course> courseOpt = getCourseById(courseId);
+        if (courseOpt.isPresent()) {
+            Course course = courseOpt.get();
+            course.setCourseName(newName);
+            course.setCapacity(newCapacity);
+            System.out.println("Course updated successfully.");
+            return true;
+        }
+        System.out.println("Course not found.");
+        return false;
+    }
+
+    // Delete
+    public boolean removeCourse(String courseId) {
+        Optional<Course> courseOpt = getCourseById(courseId);
+        if (courseOpt.isPresent()) {
+            courses.remove(courseOpt.get());
+            System.out.println("Course removed successfully.");
+            return true;
+        }
+        System.out.println("Course not found.");
+        return false;
+    }
+}
