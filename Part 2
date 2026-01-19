@@ -1,0 +1,7 @@
+echo "# الجزء الثاني" >> README.md 
+git init 
+git add README.md 
+git commit -m "first commit" 
+git branch -M main 
+git remote add origin https://github.com/yk7358583-art/Part-2.git
+ git push -u origin mai
